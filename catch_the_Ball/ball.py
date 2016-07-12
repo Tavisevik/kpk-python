@@ -1,88 +1,82 @@
 import tkinter
+from random import choice, randint
+# randint(1, 1000) - достигает от 1 до 100 включительно
+# choice(2,5,1) - выбирает из списка
 
-def button1_command():
+ball_initial_number = 20
+ball_minimal_radius = 15
+ball_maximal_radius = 40
+ball_available_colors = ['green', 'blue', 'red', 'gray', '#FF00FF', '#FFFF00']
+
+def click_ball(event):
     """
-    по стандарту: по пробелу
+    Обработчик событий от мышки для игрового холста
+    :param event:мышка указывет
+     По клику мышкой нужно удалять тот объект, на который
+     А также засчитывать его очки
     :return:
     """
+    obj = canvas.find_closest(event.x, event.y)
+    #print(dir(obj)) # печатает номер объекта при создании
+    #if obj['x']
+    #print(canvas.coords(obj)
+    x1, y1, x2, y2 = canvas.coords(obj)
+    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+        canvas.delete(obj)
+        #FIXME: нужно учесть объект в очках
+        create_random_ball()
+
+def move_all_balls(event):
     """
+    передвигат все шарики на чуть-чуть
     :return:
     """
-    print('Button 1 default command.')
+    for obj in canvas.find_all():
+        dx = randint(-1, 1)
+        dy = randint(-1, 1)
+        canvas.move(obj, dx, dy)
 
-def print_hello(event):
-    print('Hello!')
-#    print(dir(event))
+def create_random_ball():
+    """
+    создает шарик в случайном месте игрового холста
+    шарик не выходит за границу тгрового поля
+    :return:
+    """
+    R = randint(ball_minimal_radius, ball_maximal_radius)
+    x = randint(0, int(canvas['width'])-1-2 * R)
+    y = randint(0, int(canvas['width'])-1-2 * R)
+    canvas.create_oval(x,y,x+2*R, y+2*R, width=1, fill=random_color())
 
-#    print(event.char)
-#    print(event.delta)
-#    print(event.height)
-#    print(event.keycode)
-#    print(event.keysym)
-#    print(event.keysym_num)
-    print(event.num)
-#    print(event.send_event)
-#    print(event.serial)
-#    print(event.state)
-#    print(event.time)
-#    print(event.type)
-#    print(event.widget)
-#    print(event.width)
-    print(event.x, event.x)
-    print(event.x_root, event.y_root)
-    me = event.widget
-    # Что можно сделать с me?
-    if me== button1:
-        print('Hello!')
-    elif me == button2:
-        print('Yoe press button 2')
-    else:
-        raise ValueError
+def random_color():
+    """
+    :return: случайный цвет из некоторого набора цветов
+    """
+    return choice(ball_available_colors)
+
+def init_ball_catch_game():
+    """
+     Создает необхоимое для игры количство шариков,по которым нужно будет кликать
+
+     """
+    for i in range(ball_initial_number):
+        create_random_ball()
+
 
 def init_main_window():
     """
     Инициализация главного окна
-    создание всех виджетов и их упаковка
-    :return:
+        :return:
     """
-    """
-    :return:
-    """
-    global root, button1, button2, label, text, scale
+    global root, canvas
     root  = tkinter.Tk()
+    canvas = tkinter.Canvas(root, background='white', width=400, height=400)
+    canvas.bind('<Button>', click_ball)
+    canvas.bind('<Motion>', move_all_balls)
+    canvas.pack()
 
-    # вариант 1 - нажатие только левой кнопкой мыши
-    # button1 =tkinter.Button(root, text = "Button 1")
-    # button1.bind("<Button-1>", print_hello)
-    # button1.pack()
-
-    # вариант 2 - нажатие пробела
-    #button1 =tkinter.Button(root, text="Button 1", command=button1_command)
-    #button1.pack()
-
-    # вариант 3 -  можно нажимать разными кнопками мыши
-    button1 =tkinter.Button(root, text="Button 1", command=button1_command)
-    button1.bind("<Button>", print_hello)
-#    button1.pack()
-
-    button2 =tkinter.Button(root, text = "Button 2")
-    button2.bind("<Button>", print_hello)
-    button2['text'] = 'Новый текст'
-#    button2.pack()
-
-    variable = tkinter.IntVar(0)
-
-    label = tkinter.Label(root, textvariable=variable)
-    scale = tkinter.Scale(root,orient=tkinter.HORIZONTAL,length=300,
-          from_=0,to=100,tickinterval=10,resolution=5, variable=variable)
-    text = tkinter.Entry(root, textvariable=variable)
-#    label.pack()
-#    scale.pack()
-#    text.pack()
-    for obj in button1,button2, label,scale,text:
-        obj.pack()
-
+if __name__ == "__main":
+    init_main_window()
+    init_ball_catch_game()
     root.mainloop()
+    print("Заходите поиграть еще!")
 
-
-init_main_window()
