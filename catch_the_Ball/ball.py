@@ -68,13 +68,14 @@ def init_main_window():
         :return:
     """
     global root, canvas
-    root  = tkinter.Tk()
+
+    root = tkinter.Tk()
     canvas = tkinter.Canvas(root, background='white', width=400, height=400)
-    canvas.bind('<Button>', click_ball)
-    canvas.bind('<Motion>', move_all_balls)
+    canvas.bind("<Button>", click_ball)
+    canvas.bind("<Motion>", move_all_balls)
     canvas.pack()
 
-if __name__ == "__main":
+if __name__ == "__main__":
     init_main_window()
     init_ball_catch_game()
     root.mainloop()
